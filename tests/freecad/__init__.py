@@ -1,0 +1,1 @@
+# FreeCAD integration tests package
