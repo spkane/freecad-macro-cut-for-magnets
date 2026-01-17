@@ -21,13 +21,29 @@ lint:
 
 # Run type checking (via pre-commit mypy hook)
 typecheck:
-    @echo "Running type checking..."
-    @pre-commit run mypy --all-files && echo "✓ Type checking passed" || echo "✗ Type checking found issues"
+    #!/usr/bin/env bash
+    echo "Running type checking..."
+    pre-commit run mypy --all-files
+    exit_code=$?
+    if [[ $exit_code -eq 0 ]]; then
+        echo "✓ Type checking passed"
+    else
+        echo "✗ Type checking found issues"
+    fi
+    exit $exit_code
 
 # Run security scanning (via pre-commit bandit hook)
 security:
-    @echo "Running security scan..."
-    @pre-commit run bandit --all-files && echo "✓ Security scan passed" || echo "✗ Security scan found issues"
+    #!/usr/bin/env bash
+    echo "Running security scan..."
+    pre-commit run bandit --all-files
+    exit_code=$?
+    if [[ $exit_code -eq 0 ]]; then
+        echo "✓ Security scan passed"
+    else
+        echo "✗ Security scan found issues"
+    fi
+    exit $exit_code
 
 # Run spell checking
 spellcheck:

@@ -145,23 +145,33 @@ class JustRunner:
         """
         cmd: list[str] = [self._just_path, "--dry-run", command, *args]
 
-        # S603: subprocess call is safe here - we're running `just` with
-        # controlled arguments in a test context
-        result = subprocess.run(  # noqa: S603
-            cmd,
-            cwd=self.project_root,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            check=False,
-        )
-        return JustResult(
-            command=command,
-            returncode=result.returncode,
-            stdout=result.stdout,
-            stderr=result.stderr,
-            success=result.returncode == 0,
-        )
+        try:
+            # S603: subprocess call is safe here - we're running `just` with
+            # controlled arguments in a test context
+            result = subprocess.run(  # noqa: S603
+                cmd,
+                cwd=self.project_root,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+            )
+            return JustResult(
+                command=command,
+                returncode=result.returncode,
+                stdout=result.stdout,
+                stderr=result.stderr,
+                success=result.returncode == 0,
+            )
+        except subprocess.TimeoutExpired as e:
+            stdout_val = str(e.stdout) if e.stdout else ""
+            return JustResult(
+                command=command,
+                returncode=-1,
+                stdout=stdout_val,
+                stderr=f"Dry-run timed out after {timeout}s",
+                success=False,
+            )
 
     def list_commands(self, module: str | None = None) -> list[str]:
         """List available just commands, optionally for a specific module."""

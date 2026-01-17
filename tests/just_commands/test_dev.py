@@ -38,7 +38,10 @@ class TestDevRuntime:
     def test_tree_shows_structure(self, just: JustRunner) -> None:
         """Tree command should show project structure."""
         result = just.run("dev::tree", timeout=30)
-        # Tree command may fail if tree is not installed, but should execute
-        if result.success:
-            # Should show some directories
-            assert "macro" in result.stdout or "tests" in result.stdout
+        # Guard against timeout and missing command
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
+        assert result.returncode != 127, f"Command not found: {result.stderr}"
+        # Assert command succeeded
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+        # Should show some directories
+        assert "macro" in result.stdout or "tests" in result.stdout

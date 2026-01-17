@@ -37,6 +37,10 @@ class TestDocumentationRuntime:
     def test_build_creates_site(self, just: JustRunner) -> None:
         """Build command should create documentation site."""
         result = just.run("documentation::build", timeout=120)
-        # Build may fail if mkdocs deps not installed, but should execute
-        if result.success:
-            assert "site" in result.stdout or result.returncode == 0
+        # Guard against timeout and missing command
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
+        assert result.returncode != 127, f"Command not found: {result.stderr}"
+        # Assert command succeeded
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+        # Build output should mention site directory
+        assert "site" in result.stdout or "documentation" in result.stdout.lower()

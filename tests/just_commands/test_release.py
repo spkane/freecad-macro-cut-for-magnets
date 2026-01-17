@@ -49,6 +49,8 @@ class TestReleaseRuntime:
     def test_list_tags_runs(self, just: JustRunner) -> None:
         """List tags command should run without crashing."""
         result = just.run("release::list-tags", timeout=30)
-        # Should execute without crashing (may have no tags)
+        # Guard against timeout and missing command
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
         assert result.returncode != 127, f"Command not found: {result.stderr}"
-        assert result.returncode != -1, f"Timed out: {result.stderr}"
+        # Assert command succeeded (may have no tags, but should still succeed)
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"

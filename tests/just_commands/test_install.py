@@ -44,10 +44,15 @@ class TestInstallRuntime:
     def test_status_runs(self, just: JustRunner) -> None:
         """Status command should run and show installation status."""
         result = just.run("install::status", timeout=30)
-        # Should execute without crashing
+        # Guard against timeout and missing command
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
         assert result.returncode != 127, f"Command not found: {result.stderr}"
-        assert result.returncode != -1, f"Timed out: {result.stderr}"
-        # Should show some status output
+        # Assert command succeeded
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+        # Should show some status output (check both stdout and stderr)
+        combined_output = f"{result.stdout}{result.stderr}"
         assert (
-            "Installation Status" in result.output or "INSTALLED" in result.output or "NOT INSTALLED" in result.output
+            "Installation Status" in combined_output
+            or "INSTALLED" in combined_output
+            or "NOT INSTALLED" in combined_output
         )
