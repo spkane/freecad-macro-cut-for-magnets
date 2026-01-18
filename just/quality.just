@@ -19,6 +19,32 @@ format:
 lint:
     mise exec -- ruff check {{project_root}}/macros
 
+# Run type checking (via pre-commit mypy hook)
+typecheck:
+    #!/usr/bin/env bash
+    echo "Running type checking..."
+    pre-commit run mypy --all-files
+    exit_code=$?
+    if [[ $exit_code -eq 0 ]]; then
+        echo "✓ Type checking passed"
+    else
+        echo "✗ Type checking found issues"
+    fi
+    exit $exit_code
+
+# Run security scanning (via pre-commit bandit hook)
+security:
+    #!/usr/bin/env bash
+    echo "Running security scan..."
+    pre-commit run bandit --all-files
+    exit_code=$?
+    if [[ $exit_code -eq 0 ]]; then
+        echo "✓ Security scan passed"
+    else
+        echo "✗ Security scan found issues"
+    fi
+    exit $exit_code
+
 # Run spell checking
 spellcheck:
     mise exec -- codespell --ignore-words {{project_root}}/.codespell-ignore-words.txt {{project_root}}/macros {{project_root}}/README.md
