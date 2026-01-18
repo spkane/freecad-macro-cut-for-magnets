@@ -20,10 +20,16 @@ class TestReleaseSyntax:
 
     RELEASE_COMMANDS: ClassVar[list[str]] = [
         "release::list-tags",
+        "release::latest-tag",
+        "release::version",
+        "release::status",
+        "release::changes-since",
+        "release::draft-notes",
     ]
 
     # Commands that require arguments (test with dummy args)
     RELEASE_COMMANDS_WITH_ARGS: ClassVar[list[tuple[str, str]]] = [
+        ("release::bump", "0.0.0"),
         ("release::tag", "0.0.0"),
     ]
 
@@ -54,3 +60,31 @@ class TestReleaseRuntime:
         assert result.returncode != 127, f"Command not found: {result.stderr}"
         # Assert command succeeded (may have no tags, but should still succeed)
         assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+
+    @pytest.mark.just_runtime
+    def test_status_runs(self, just: JustRunner) -> None:
+        """Status command should run and show release status."""
+        result = just.run("release::status", timeout=30)
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
+        assert result.returncode != 127, f"Command not found: {result.stderr}"
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+        # Should show version information
+        assert "version" in result.output.lower()
+
+    @pytest.mark.just_runtime
+    def test_changes_since_runs(self, just: JustRunner) -> None:
+        """Changes-since command should run and show commits."""
+        result = just.run("release::changes-since", timeout=30)
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
+        assert result.returncode != 127, f"Command not found: {result.stderr}"
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+
+    @pytest.mark.just_runtime
+    def test_version_runs(self, just: JustRunner) -> None:
+        """Version command should run and output a version string."""
+        result = just.run("release::version", timeout=30)
+        assert result.returncode != -1, f"Command timed out: {result.stderr}"
+        assert result.returncode != 127, f"Command not found: {result.stderr}"
+        assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
+        # Should output something like X.Y.Z
+        assert result.output.strip(), "Version output should not be empty"
