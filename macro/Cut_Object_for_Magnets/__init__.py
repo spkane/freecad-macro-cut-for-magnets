@@ -11,6 +11,6 @@ Modules:
     cut_magnets_fc: FreeCAD-dependent operations
 """
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"
 __author__ = "Sean P. Kane"
 __license__ = "MIT"

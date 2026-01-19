@@ -38,14 +38,25 @@ bump version:
     echo "Bumping Cut Object for Magnets macro to version: $VERSION (date: $TODAY)"
     echo ""
 
-    # Update __version__ in the macro file
+    # Update __Version__ and __Date__ in the macro file (FreeCAD uses capital V)
     MACRO_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
     if [ -f "$MACRO_FILE" ]; then
-        sed 's/^__version__ = "[^"]*"/__version__ = "'"$VERSION"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
+        sed 's/^__Version__ = "[^"]*"/__Version__ = "'"$VERSION"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
+        sed 's/^__Date__ = "[^"]*"/__Date__ = "'"$TODAY"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
         echo "Updated $MACRO_FILE:"
-        grep "__version__" "$MACRO_FILE" | head -1
+        grep -E "^__Version__|^__Date__" "$MACRO_FILE" | head -2
     else
         echo "WARNING: File not found: $MACRO_FILE"
+    fi
+
+    # Update __version__ in __init__.py (Python convention)
+    INIT_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/__init__.py"
+    if [ -f "$INIT_FILE" ]; then
+        sed 's/^__version__ = "[^"]*"/__version__ = "'"$VERSION"'"/' "$INIT_FILE" > "$INIT_FILE.tmp" && mv "$INIT_FILE.tmp" "$INIT_FILE"
+        echo "Updated $INIT_FILE:"
+        grep "__version__" "$INIT_FILE" | head -1
+    else
+        echo "WARNING: File not found: $INIT_FILE"
     fi
 
     # Update package.xml version and date
@@ -103,10 +114,10 @@ tag version:
     # Verify version in source files matches tag version
     echo "Verifying version in source files..."
 
-    # Check macro file
+    # Check macro file (FreeCAD uses capital V: __Version__)
     MACRO_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
     if [ -f "$MACRO_FILE" ]; then
-        MACRO_VERSION=$(grep -o '__version__ = "[^"]*"' "$MACRO_FILE" | head -1 | cut -d'"' -f2)
+        MACRO_VERSION=$(grep -o '__Version__ = "[^"]*"' "$MACRO_FILE" | head -1 | cut -d'"' -f2)
         if [ "$MACRO_VERSION" != "$VERSION" ]; then
             echo "ERROR: Version mismatch in $MACRO_FILE"
             echo "  Expected: $VERSION"
@@ -164,6 +175,103 @@ list-tags:
 # Show the latest release tag
 latest-tag:
     @git tag -l 'macro-cut-object-for-magnets-v*' | sort -V | tail -1
+
+# Show commits since last release (to help with release notes)
+changes-since:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    LATEST_TAG=$(git tag -l 'macro-cut-object-for-magnets-v*' | sort -V | tail -1)
+
+    if [ -z "$LATEST_TAG" ]; then
+        echo "No previous releases found. Showing all commits."
+        echo ""
+        git log -n 30 --oneline -- macro/ package.xml
+    else
+        echo "Changes since $LATEST_TAG:"
+        echo ""
+        git log --oneline "$LATEST_TAG"..HEAD -- macro/ package.xml
+    fi
+
+# Show release status (unreleased changes and version info)
+status:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    echo "=========================================="
+    echo "Release Status"
+    echo "=========================================="
+    echo ""
+
+    # Get current version
+    CURRENT_VERSION=$(grep -o '<version>[^<]*</version>' {{project_root}}/package.xml | head -1 | sed 's/<[^>]*>//g')
+    LATEST_TAG=$(git tag -l 'macro-cut-object-for-magnets-v*' | sort -V | tail -1)
+    LATEST_VERSION="${LATEST_TAG#macro-cut-object-for-magnets-v}"
+
+    echo "Current version (package.xml): $CURRENT_VERSION"
+    echo "Latest release tag:            ${LATEST_TAG:-none}"
+    echo "Latest release version:        ${LATEST_VERSION:-none}"
+    echo ""
+
+    # Count unreleased changes
+    if [ -z "$LATEST_TAG" ]; then
+        CHANGES=$(git log --oneline -- macro/ package.xml | wc -l | tr -d ' ')
+        echo "Commits since initial: $CHANGES"
+    else
+        CHANGES=$(git log --oneline "$LATEST_TAG"..HEAD -- macro/ package.xml | wc -l | tr -d ' ')
+        echo "Commits since last release: $CHANGES"
+    fi
+
+    if [ "$CHANGES" -gt 0 ]; then
+        echo ""
+        echo "Run 'just release::changes-since' to see the changes."
+    else
+        echo ""
+        echo "No unreleased changes."
+    fi
+
+# Draft release notes from conventional commits since last release
+draft-notes:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    LATEST_TAG=$(git tag -l 'macro-cut-object-for-magnets-v*' | sort -V | tail -1)
+
+    echo "# Draft Release Notes for Cut Object for Magnets"
+    echo ""
+
+    if [ -z "$LATEST_TAG" ]; then
+        echo "No previous releases found. Showing all commits."
+        echo ""
+        REV_RANGE="HEAD"
+    else
+        echo "Changes since: $LATEST_TAG"
+        echo ""
+        REV_RANGE="${LATEST_TAG}..HEAD"
+    fi
+
+    PATHS=("macro/" "package.xml")
+
+    echo "## Added"
+    echo ""
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ feat(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    echo ""
+
+    echo "## Changed"
+    echo ""
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ (refactor|perf|style)(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    echo ""
+
+    echo "## Fixed"
+    echo ""
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ fix(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    echo ""
+
+    echo "---"
+    echo ""
+    echo "## All Commits (chronological)"
+    echo ""
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | sed -E 's/^[a-f0-9]+ /- /' || echo "(no commits)"
 
 # =============================================================================
 # FreeCAD Wiki Update Helpers

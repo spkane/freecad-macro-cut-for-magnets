@@ -399,7 +399,7 @@ git add -A && git commit -m "chore: bump to 1.0.0"
 
 The bump command updates:
 
-- `macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro` (`__version__`)
+- `macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro` (`__Version__` and `__Date__`)
 - `package.xml` (`<version>` and `<date>`)
 - `macro/Cut_Object_for_Magnets/wiki-source.txt` (`|Version=` and `|Date=`)
 
