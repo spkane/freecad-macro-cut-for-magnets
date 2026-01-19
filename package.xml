@@ -18,7 +18,7 @@
     <url type="repository" branch="main">https://github.com/spkane/freecad-macro-cut-for-magnets</url>
     <url type="bugtracker">https://github.com/spkane/freecad-macro-cut-for-magnets/issues</url>
     <url type="readme">https://github.com/spkane/freecad-macro-cut-for-magnets/blob/main/README.md</url>
-    <url type="documentation">https://github.com/spkane/freecad-macro-cut-for-magnets#readme</url>
+    <url type="documentation">https://spkane.github.io/freecad-macro-cut-for-magnets/</url>
 
     <tag>macro</tag>
     <tag>3D printing</tag>
