@@ -38,12 +38,13 @@ bump version:
     echo "Bumping Cut Object for Magnets macro to version: $VERSION (date: $TODAY)"
     echo ""
 
-    # Update __Version__ in the macro file (FreeCAD uses capital V)
+    # Update __Version__ and __Date__ in the macro file (FreeCAD uses capital V)
     MACRO_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
     if [ -f "$MACRO_FILE" ]; then
         sed 's/^__Version__ = "[^"]*"/__Version__ = "'"$VERSION"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
+        sed 's/^__Date__ = "[^"]*"/__Date__ = "'"$TODAY"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
         echo "Updated $MACRO_FILE:"
-        grep "__Version__" "$MACRO_FILE" | head -1
+        grep -E "^__Version__|^__Date__" "$MACRO_FILE" | head -2
     else
         echo "WARNING: File not found: $MACRO_FILE"
     fi
@@ -248,28 +249,28 @@ draft-notes:
         REV_RANGE="${LATEST_TAG}..HEAD"
     fi
 
-    PATHS="macro/ package.xml"
+    PATHS=("macro/" "package.xml")
 
     echo "## Added"
     echo ""
-    git log --oneline "$REV_RANGE" -- $PATHS 2>/dev/null | grep -iE "^[a-f0-9]+ feat(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ feat(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
     echo ""
 
     echo "## Changed"
     echo ""
-    git log --oneline "$REV_RANGE" -- $PATHS 2>/dev/null | grep -iE "^[a-f0-9]+ (refactor|perf|style)(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ (refactor|perf|style)(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
     echo ""
 
     echo "## Fixed"
     echo ""
-    git log --oneline "$REV_RANGE" -- $PATHS 2>/dev/null | grep -iE "^[a-f0-9]+ fix(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | grep -iE "^[a-f0-9]+ fix(\(|:)" | sed -E 's/^[a-f0-9]+ /- /' || true
     echo ""
 
     echo "---"
     echo ""
     echo "## All Commits (chronological)"
     echo ""
-    git log --oneline "$REV_RANGE" -- $PATHS 2>/dev/null | sed -E 's/^[a-f0-9]+ /- /' || echo "(no commits)"
+    git log --oneline "$REV_RANGE" -- "${PATHS[@]}" 2>/dev/null | sed -E 's/^[a-f0-9]+ /- /' || echo "(no commits)"
 
 # =============================================================================
 # FreeCAD Wiki Update Helpers
