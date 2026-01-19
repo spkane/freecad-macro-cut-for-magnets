@@ -124,6 +124,13 @@ addon:
     MACRO_SYMLINK="$MACRO_DIR/CutObjectForMagnets.FCMacro"
     MACRO_TARGET="$ADDON_DEST/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
 
+    # Verify target file exists before creating symlink
+    if [[ ! -f "$MACRO_TARGET" ]]; then
+        echo "ERROR: Target file does not exist: $MACRO_TARGET"
+        echo "The addon copy may have failed. Cannot create symlink."
+        exit 1
+    fi
+
     # Remove existing symlink if present
     if [[ -L "$MACRO_SYMLINK" ]]; then
         rm "$MACRO_SYMLINK"
