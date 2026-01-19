@@ -185,7 +185,7 @@ changes-since:
     if [ -z "$LATEST_TAG" ]; then
         echo "No previous releases found. Showing all commits."
         echo ""
-        git log --oneline -- macro/ package.xml | head -30
+        git log -n 30 --oneline -- macro/ package.xml
     else
         echo "Changes since $LATEST_TAG:"
         echo ""

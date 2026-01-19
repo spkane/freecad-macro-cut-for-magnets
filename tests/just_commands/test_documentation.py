@@ -43,4 +43,5 @@ class TestDocumentationRuntime:
         # Assert command succeeded
         assert result.success, f"Command failed with exit code {result.returncode}: {result.stderr}"
         # Build output should mention site directory (mkdocs outputs to stderr)
-        assert "site" in result.output or "documentation" in result.output.lower()
+        lower_output = result.output.lower()
+        assert "site" in lower_output or "documentation" in lower_output
