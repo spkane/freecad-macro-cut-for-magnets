@@ -24,14 +24,17 @@ __Author__ = "Sean P. Kane"
 __Version__ = "0.6.2"
 __Date__ = "2026-01-18"
 __License__ = "MIT"
-__Web__ = "https://github.com/spkane/freecad-robust-mcp-and-more"
-__Wiki__ = "https://github.com/spkane/freecad-robust-mcp-and-more#readme"
+__Web__ = "https://github.com/spkane/freecad-macro-cut-for-magnets"
+__Wiki__ = "https://github.com/spkane/freecad-macro-cut-for-magnets#readme"
 __Icon__ = ""
 __Help__ = "Select an object to cut, run the macro, configure cut plane and magnet hole parameters, then click Execute Cut. Creates two parts with aligned magnet holes."
 __Status__ = "Beta"
 __Requires__ = "FreeCAD 0.19+"
-__Communication__ = "https://github.com/spkane/freecad-robust-mcp-and-more/issues"
+__Communication__ = "https://github.com/spkane/freecad-macro-cut-for-magnets/issues"
 __Files__ = ""
+
+import os
+import sys
 
 import FreeCAD as App
 import FreeCADGui as Gui
@@ -41,6 +44,11 @@ from PySide import QtGui
 # Try to import from modules if available (development environment)
 # Falls back to embedded definitions for standalone macro use
 _USE_MODULES = False
+# Use realpath to resolve symlinks (important when FCMacro is symlinked from Macro dir)
+_macro_dir = os.path.dirname(os.path.realpath(__file__))
+if _macro_dir not in sys.path:
+    sys.path.insert(0, _macro_dir)
+
 try:
     from cut_magnets_core import HolePlacementError
 
@@ -57,6 +65,10 @@ if not _USE_MODULES:
         pass
 
 
+# Parameter group for saving user preferences
+_PARAM_GROUP = "User parameter:BaseApp/Preferences/Macros/CutObjectForMagnets"
+
+
 class CutObjectForMagnetsDialog(QtGui.QDialog):
     """Dialog for configuring cut parameters and magnet holes."""
 
@@ -65,6 +77,7 @@ class CutObjectForMagnetsDialog(QtGui.QDialog):
         self.setWindowTitle("Cut Object for Magnets")
         self.setModal(True)
         self.setup_ui()
+        self._load_saved_defaults()
 
     def setup_ui(self):
         """Initialize the user interface."""
@@ -172,15 +185,22 @@ class CutObjectForMagnetsDialog(QtGui.QDialog):
         self.status_label.setWordWrap(True)
         layout.addWidget(self.status_label)
 
-        # Buttons
+        # Save defaults checkbox and buttons
+        bottom_layout = QtGui.QHBoxLayout()
+        self.save_defaults_checkbox = QtGui.QCheckBox("Save choices as defaults")
+        self.save_defaults_checkbox.setToolTip("Save current hole settings as defaults for future use")
+        bottom_layout.addWidget(self.save_defaults_checkbox)
+        bottom_layout.addStretch()
+
         button_box = QtGui.QDialogButtonBox()
         self.execute_btn = button_box.addButton("Execute Cut", QtGui.QDialogButtonBox.AcceptRole)
         button_box.addButton(QtGui.QDialogButtonBox.Cancel)
 
-        button_box.accepted.connect(self.accept)
+        button_box.accepted.connect(self._on_accept)
         button_box.rejected.connect(self.reject)
 
-        layout.addWidget(button_box)
+        bottom_layout.addWidget(button_box)
+        layout.addLayout(bottom_layout)
         self.setLayout(layout)
 
     def _populate_cuttable_objects(self):
@@ -346,6 +366,62 @@ class CutObjectForMagnetsDialog(QtGui.QDialog):
         self.progress_bar.setMaximum(maximum)
         self.progress_bar.setValue(value)
         QtGui.QApplication.processEvents()
+
+    def _on_accept(self):
+        """Handle accept button click, saving defaults if requested."""
+        if self.save_defaults_checkbox.isChecked():
+            self._save_defaults()
+        self.accept()
+
+    def _load_saved_defaults(self):
+        """Load saved user preferences from FreeCAD parameters.
+
+        Only magnet hole settings are saved/restored. The following are
+        intentionally NOT saved as they are context-specific:
+        - Object to cut
+        - Cut plane settings (plane type, preset, model plane, offset)
+        """
+        try:
+            params = App.ParamGet(_PARAM_GROUP)
+
+            if not params.GetBool("HasSavedSettings", False):
+                return
+
+            # Load magnet hole settings only
+            self.diameter_spin.setValue(params.GetFloat("Diameter", 3.0))
+            self.depth_spin.setValue(params.GetFloat("Depth", 3.0))
+            self.hole_count_spin.setValue(params.GetInt("HoleCount", 6))
+            self.clearance_preferred_spin.setValue(params.GetFloat("ClearancePreferred", 2.0))
+            self.clearance_min_spin.setValue(params.GetFloat("ClearanceMin", 0.5))
+
+        except Exception:  # nosec B110
+            # If loading fails, just use built-in defaults
+            pass
+
+    def _save_defaults(self):
+        """Save current magnet hole settings as user defaults.
+
+        Only magnet hole settings are saved. The following are
+        intentionally NOT saved as they are context-specific:
+        - Object to cut
+        - Cut plane settings (plane type, preset, model plane, offset)
+        """
+        try:
+            params = App.ParamGet(_PARAM_GROUP)
+
+            # Save magnet hole settings only
+            params.SetFloat("Diameter", self.diameter_spin.value())
+            params.SetFloat("Depth", self.depth_spin.value())
+            params.SetInt("HoleCount", self.hole_count_spin.value())
+            params.SetFloat("ClearancePreferred", self.clearance_preferred_spin.value())
+            params.SetFloat("ClearanceMin", self.clearance_min_spin.value())
+
+            # Mark that we have saved settings
+            params.SetBool("HasSavedSettings", True)
+
+            App.Console.PrintMessage("Cut Object for Magnets: Preferences saved.\n")
+        except Exception as e:
+            App.Console.PrintWarning(f"Cut Object for Magnets: Could not save preferences: {e}\n")
 
 
 class SmartCutter:
@@ -1781,7 +1857,7 @@ def main():
     if selected_plane:
         dialog.set_default_plane(selected_plane.Label)
 
-    if dialog.exec_() != QtGui.QDialog.Accepted:
+    if dialog.exec() != QtGui.QDialog.Accepted:
         return
 
     # Get the object selected in the dialog (user may have changed it)
