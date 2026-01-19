@@ -210,6 +210,7 @@ status:
 
     echo "Current version (package.xml): $CURRENT_VERSION"
     echo "Latest release tag:            ${LATEST_TAG:-none}"
+    echo "Latest release version:        ${LATEST_VERSION:-none}"
     echo ""
 
     # Count unreleased changes
