@@ -11,7 +11,8 @@
 
 ![Macro Icon](macro/Cut_Object_for_Magnets/CutObjectForMagnets.svg)
 
-**Version:** 0.6.1
+**Version:** 0.6.2
+**FreeCAD Forum:** [addon discussion post](https://forum.freecad.org/viewtopic.php?t=102291)
 
 A FreeCAD macro that intelligently cuts 3D objects along a plane and automatically places magnet holes with built-in surface penetration detection. Perfect for creating multi-part prints that snap together with magnets!
 
@@ -24,6 +25,10 @@ A FreeCAD macro that intelligently cuts 3D objects along a plane and automatical
 - **Angled Cuts** - Cut along any angle by selecting a datum plane
 - **Even Distribution** - Holes are evenly spaced around the perimeter of the cut face
 - **Non-Destructive** - Original object is hidden, not deleted
+
+## Installation Requirements / Dependencies
+
+- [FreeCAD](https://www.freecadweb.org/) 0.21+ or 1.0+
 
 ## Quick Start
 
@@ -115,7 +120,7 @@ See the [full documentation](macro/Cut_Object_for_Magnets/README-CutObjectForMag
 
 ## Requirements
 
-- FreeCAD 0.21 or later (0.19+ may work)
+- FreeCAD 0.21 or later (0.21+ may work)
 
 ## Contributing
 

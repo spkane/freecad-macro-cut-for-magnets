@@ -2,8 +2,8 @@
 
 ![Macro Icon](CutObjectForMagnets.svg)
 
-**Version:** 0.6.1
-**FreeCAD Version:** 0.19 or later
+**Version:** 0.6.2
+**FreeCAD Version:** 0.21 or later
 **License:** MIT
 
 > **Documentation:** [https://spkane.github.io/freecad-robust-mcp-and-more/](https://spkane.github.io/freecad-robust-mcp-and-more/)
