@@ -1,5 +1,15 @@
 # Cut Object for Magnets Macro Release Notes
 
+## Version 0.6.2 (2026-01-18)
+
+Release notes for changes between v0.6.1 and v0.6.2.
+
+### Changed
+
+- Migrated to a new GitHub repository.
+  - <https://github.com/spkane/freecad-macro-cut-for-magnets>
+  - Various minor cleanup and improvements.
+
 ## Version 0.6.1 (2026-01-12)
 
 Release notes for changes between v0.5.0-beta and v0.6.1.
