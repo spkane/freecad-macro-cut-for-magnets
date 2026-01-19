@@ -57,4 +57,4 @@ Select Object + Plane (Ctrl+Click) → Run Macro → Plane auto-selected!
 
 - [GitHub Repository](https://github.com/spkane/freecad-macro-cut-for-magnets)
 - [Report Issues](https://github.com/spkane/freecad-macro-cut-for-magnets/issues)
-- [FreeCAD Wiki](https://wiki.freecad.org/Macro_Cut_Object_for_Magnets)
+- [FreeCAD Wiki](https://wiki.freecad.org/Macro_Cut_Object_For_Magnets)

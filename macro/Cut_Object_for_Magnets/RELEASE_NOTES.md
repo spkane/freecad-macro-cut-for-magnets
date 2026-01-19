@@ -40,7 +40,7 @@ Release notes for changes between v0.5.0-beta and v0.6.1.
 ### Added
 
 - **FreeCAD Addon Manager metadata**: Macro now includes standard metadata fields for better Addon Manager integration
-- **FreeCAD Wiki page**: Official wiki documentation at [Macro Cut Object for Magnets](https://wiki.freecad.org/Macro_Cut_Object_for_Magnets)
+- **FreeCAD Wiki page**: Official wiki documentation at [Macro Cut Object for Magnets](https://wiki.freecad.org/Macro_Cut_Object_For_Magnets)
 - **Example images**: Added screenshots showing the dialog and example output
 
 ### Changed

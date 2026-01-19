@@ -21,7 +21,7 @@ jobs:
       macro_name: 'Cut Object for Magnets'
       archive_name: 'CutObjectForMagnets'
       readme_file: 'README-CutObjectForMagnets.md'
-      wiki_url: 'https://wiki.freecad.org/Macro_Cut_Object_for_Magnets'
+      wiki_url: 'https://wiki.freecad.org/Macro_Cut_Object_For_Magnets'
       description: |
         A FreeCAD macro that cuts 3D objects along a plane and automatically adds aligned magnet holes with surface collision detection. Perfect for creating 3D printed parts that snap together with embedded magnets.
 
