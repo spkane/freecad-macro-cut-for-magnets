@@ -38,14 +38,24 @@ bump version:
     echo "Bumping Cut Object for Magnets macro to version: $VERSION (date: $TODAY)"
     echo ""
 
-    # Update __version__ in the macro file
+    # Update __Version__ in the macro file (FreeCAD uses capital V)
     MACRO_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
     if [ -f "$MACRO_FILE" ]; then
-        sed 's/^__version__ = "[^"]*"/__version__ = "'"$VERSION"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
+        sed 's/^__Version__ = "[^"]*"/__Version__ = "'"$VERSION"'"/' "$MACRO_FILE" > "$MACRO_FILE.tmp" && mv "$MACRO_FILE.tmp" "$MACRO_FILE"
         echo "Updated $MACRO_FILE:"
-        grep "__version__" "$MACRO_FILE" | head -1
+        grep "__Version__" "$MACRO_FILE" | head -1
     else
         echo "WARNING: File not found: $MACRO_FILE"
+    fi
+
+    # Update __version__ in __init__.py (Python convention)
+    INIT_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/__init__.py"
+    if [ -f "$INIT_FILE" ]; then
+        sed 's/^__version__ = "[^"]*"/__version__ = "'"$VERSION"'"/' "$INIT_FILE" > "$INIT_FILE.tmp" && mv "$INIT_FILE.tmp" "$INIT_FILE"
+        echo "Updated $INIT_FILE:"
+        grep "__version__" "$INIT_FILE" | head -1
+    else
+        echo "WARNING: File not found: $INIT_FILE"
     fi
 
     # Update package.xml version and date
@@ -103,10 +113,10 @@ tag version:
     # Verify version in source files matches tag version
     echo "Verifying version in source files..."
 
-    # Check macro file
+    # Check macro file (FreeCAD uses capital V: __Version__)
     MACRO_FILE="{{project_root}}/macro/Cut_Object_for_Magnets/CutObjectForMagnets.FCMacro"
     if [ -f "$MACRO_FILE" ]; then
-        MACRO_VERSION=$(grep -o '__version__ = "[^"]*"' "$MACRO_FILE" | head -1 | cut -d'"' -f2)
+        MACRO_VERSION=$(grep -o '__Version__ = "[^"]*"' "$MACRO_FILE" | head -1 | cut -d'"' -f2)
         if [ "$MACRO_VERSION" != "$VERSION" ]; then
             echo "ERROR: Version mismatch in $MACRO_FILE"
             echo "  Expected: $VERSION"

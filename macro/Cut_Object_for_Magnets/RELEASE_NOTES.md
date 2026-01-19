@@ -6,9 +6,16 @@ Release notes for changes between v0.6.1 and v0.6.2.
 
 ### Changed
 
-- Migrated to a new GitHub repository.
-  - <https://github.com/spkane/freecad-macro-cut-for-magnets>
-  - Various minor cleanup and improvements.
+- **Proper FreeCAD Addon**: Release being added to <https://github.com/spkane/FreeCAD-addons>.
+- **Dedicated repository**: Migrated to standalone GitHub repository for independent release cycles
+  - New home: <https://github.com/spkane/freecad-macro-cut-for-magnets>
+  - Updated all metadata URLs (`__Web__`, `__Wiki__`, `__Communication__`) to point to new repository
+- **Modular architecture**: Refactored into separate modules for better maintainability and testability
+  - `cut_magnets_core.py`: Core logic (can be unit tested without FreeCAD)
+  - `cut_magnets_fc.py`: FreeCAD-specific code
+  - `__init__.py`: Package initialization
+  - FCMacro now imports from modules when available, falls back to embedded code for standalone use
+- **Improved test infrastructure**: Added comprehensive just command tests and pytest fixtures
 
 ## Version 0.6.1 (2026-01-12)
 
