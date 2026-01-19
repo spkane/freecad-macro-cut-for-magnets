@@ -7,7 +7,7 @@ Cuts an object along a plane and adds connector holes for magnets with
 surface collision detection.
 
 Requirements:
-    - FreeCAD 0.19 or later
+    - FreeCAD 0.21 or later
     - An object selected in the 3D view
 
 Usage:
@@ -29,7 +29,7 @@ __Wiki__ = "https://github.com/spkane/freecad-macro-cut-for-magnets#readme"
 __Icon__ = ""
 __Help__ = "Select an object to cut, run the macro, configure cut plane and magnet hole parameters, then click Execute Cut. Creates two parts with aligned magnet holes."
 __Status__ = "Beta"
-__Requires__ = "FreeCAD 0.19+"
+__Requires__ = "FreeCAD 0.21+"
 __Communication__ = "https://github.com/spkane/freecad-macro-cut-for-magnets/issues"
 __Files__ = ""
 

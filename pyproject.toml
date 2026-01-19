@@ -1,6 +1,6 @@
 [project]
 name = "freecad-macro-cut-for-magnets"
-version = "0.6.1"
+version = "0.6.2"
 description = "A FreeCAD macro that cuts 3D objects along a plane and adds aligned magnet holes"
 readme = "README.md"
 license = { text = "MIT" }

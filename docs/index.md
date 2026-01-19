@@ -2,7 +2,7 @@
 
 ![Macro Icon](https://raw.githubusercontent.com/spkane/freecad-macro-cut-for-magnets/main/macro/Cut_Object_for_Magnets/CutObjectForMagnets.svg){ width="64" }
 
-**Version:** 0.6.2 | **License:** MIT | **FreeCAD:** 0.19+
+**Version:** 0.6.2 | **License:** MIT | **FreeCAD:** 0.21+
 
 A FreeCAD macro that intelligently cuts 3D objects along a plane and automatically places magnet holes with built-in surface penetration detection. Unlike simple cutting tools, this macro ensures magnet holes won't accidentally break through the outer surface of your object.
 
