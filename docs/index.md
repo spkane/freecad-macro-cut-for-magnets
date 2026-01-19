@@ -1,6 +1,6 @@
 # Cut Object for Magnets
 
-![Macro Icon](../macro/Cut_Object_for_Magnets/CutObjectForMagnets.svg){ width="64" }
+![Macro Icon](https://raw.githubusercontent.com/spkane/freecad-macro-cut-for-magnets/main/macro/Cut_Object_for_Magnets/CutObjectForMagnets.svg){ width="64" }
 
 **Version:** 0.6.1 | **License:** MIT | **FreeCAD:** 0.19+
 
