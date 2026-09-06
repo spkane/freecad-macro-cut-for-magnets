@@ -1,4 +1,4 @@
-# CLAUDE.md - AI Assistant Guidelines for This Project
+# AGENTS.md - AI Assistant Guidelines for This Project
 
 ## Project Overview
 
@@ -23,7 +23,7 @@ Before changing the Python version in `.mise.toml` or `pyproject.toml`:
 1. The Python minor version (e.g., 3.11) **must match exactly**
 1. Using Python 3.12+ with FreeCAD that bundles Python 3.11 will crash
 
-Current requirement: **Python 3.11** (matching FreeCAD 1.0.x bundled Python)
+Current requirement: **Python 3.11**. FreeCAD **1.0.x is CI-verified**; FreeCAD **1.1.x, including 1.1.3, is the current stable target** and must pass the integration gate before being advertised as fully supported. Always confirm the installed FreeCAD bundle's Python minor version before changing this requirement.
 
 ---
 
@@ -108,8 +108,11 @@ This fallback pattern ensures the macro works in both scenarios:
 This project uses [`mise`](https://mise.jdx.dev/) for local development tool management. All tool versions are pinned in `.mise.toml`.
 
 ```bash
-# Install mise via the Official mise installer script (if not already installed)
-curl https://mise.run | sh
+# Install mise through a package manager (if not already installed)
+# macOS:
+brew install mise
+# Linux/other platforms: use the package-manager or version-pinned install
+# documented by mise, and verify checksums/signatures for direct downloads.
 
 # Install all project tools
 mise install
@@ -120,14 +123,14 @@ eval "$(mise activate bash)"  # or zsh/fish
 
 ### Package Management
 
-This project uses `pip` for Python dependencies.
+This project supports both `pip` and `uv` for Python dependencies. CI uses `uv` for documentation builds, while local pure-Python development can use either path. Keep the dependency extras equivalent.
 
 ```bash
-# Install development dependencies
-pip install -e ".[dev]"
+# Preferred, matches docs CI semantics
+uv sync --extra dev --extra test --extra docs
 
-# Install documentation dependencies
-pip install -e ".[docs]"
+# pip fallback for local development
+pip install -e ".[dev,test,docs]"
 ```
 
 ### Workflow Commands (via `just`)
@@ -247,7 +250,7 @@ freecad-macro-cut-for-magnets/
 just testing::unit
 
 # Run unit tests with coverage
-just testing::unit-cov
+just testing::cov
 
 # Run FreeCAD integration tests (requires FreeCAD)
 just testing::freecad

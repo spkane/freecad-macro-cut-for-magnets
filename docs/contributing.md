@@ -24,8 +24,10 @@ Contributions are welcome! This guide will help you get started.
 git clone https://github.com/spkane/freecad-macro-cut-for-magnets.git
 cd freecad-macro-cut-for-magnets
 
-# Install mise (if not already installed)
-curl https://mise.run | sh
+# Install mise through a package manager (if not already installed)
+# macOS: brew install mise
+# Linux/other platforms: use mise's package-manager instructions, or verify
+# checksums/signatures for a version-pinned direct download before installing.
 
 # Install tools and setup pre-commit hooks
 mise trust
