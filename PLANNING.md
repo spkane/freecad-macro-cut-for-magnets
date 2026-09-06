@@ -73,7 +73,8 @@ The following checks were run against the working tree during this assessment:
 
 | Check | Result |
 | --- | --- |
-| Python version used for tests | CPython 3.11, matching current stable FreeCAD 1.1.3 packages |
+| Pure-Python test runtime | CPython 3.11 |
+| FreeCAD integration runtime | Not run locally; CI currently pins FreeCAD 1.0.0, while FreeCAD 1.1.3 is the current stable target to certify |
 | Unit tests | 60 passed |
 | Unit-test coverage | 41% package total; `cut_magnets_core.py` 98%; FreeCAD module 0% under normal pytest |
 | Just command tests | 63 passed |
@@ -226,9 +227,9 @@ while `pyproject.toml:7` permits any Python >=3.11; during this audit an unquali
 - Test current stable FreeCAD 1.1.3 and the actual full `SmartCutter` flow in CI.
 - Test the oldest release that remains in `<freecadmin>`, or raise the minimum to the
   oldest version that receives automated and manual coverage.
-- Constrain development Python to `>=3.11,<3.12` (or equivalent) while stable FreeCAD
-  embeds 3.11, add `.python-version`, and invoke `uv run --python 3.11` in every recipe.
-- Fail CI if FreeCAD's bundled Python minor version differs from the expected version.
+- Constrain pure-Python development to `>=3.11,<3.12` (or equivalent) while stable FreeCAD
+  embeds 3.11, add `.python-version`, and use `uv run --python 3.11` only for pure-Python recipes.
+- Keep FreeCAD integration recipes and CI on `freecadcmd`; fail CI if FreeCAD's bundled Python minor version differs from the expected version.
 - Perform manual GUI tests on macOS arm64, Windows x64, and Linux x64.
 
 **Acceptance criteria:** Manifest compatibility claims match green CI/manual evidence,

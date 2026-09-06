@@ -6,6 +6,10 @@ inputs:
     description: "Specific FreeCAD release tag to install (e.g., '1.0.2'). If empty, uses latest stable release."
     required: false
     default: ""
+  expected-python-minor:
+    description: "Expected Python major.minor version bundled with FreeCAD (e.g., '3.11')."
+    required: false
+    default: "3.11"
 
 outputs:
   freecad-tag:
@@ -211,5 +215,12 @@ runs:
         fi
         which freecadcmd
         which freecad
-        # Show Python version bundled with FreeCAD
-        freecadcmd -c "import sys; print(f'FreeCAD Python: {sys.version}')" || true
+        # Verify Python version bundled with FreeCAD. The macro test environment
+        # must match FreeCAD's embedded Python minor version to avoid ABI crashes.
+        EXPECTED_PYTHON_MINOR="${{ inputs.expected-python-minor }}"
+        ACTUAL_PYTHON_MINOR=$(freecadcmd -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')" | tail -n 1 | tr -d "[:space:]")
+        echo "FreeCAD Python minor version: ${ACTUAL_PYTHON_MINOR}"
+        if [ "$ACTUAL_PYTHON_MINOR" != "$EXPECTED_PYTHON_MINOR" ]; then
+            echo "ERROR: FreeCAD bundles Python ${ACTUAL_PYTHON_MINOR}, expected ${EXPECTED_PYTHON_MINOR}"
+            exit 1
+        fi
