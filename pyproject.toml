@@ -21,8 +21,8 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff>=0.14.0",
-    "bandit>=1.9.0",
+    "ruff>=0.15.10",
+    "bandit>=1.9.4",
     "codespell>=2.4.0",
     "detect-secrets>=1.5.0",
 ]
@@ -31,9 +31,9 @@ test = [
     "pytest-cov>=4.0.0",
 ]
 docs = [
-    "mkdocs>=1.6.0",
-    "mkdocs-material>=9.6.0",
-    "mkdocs-git-revision-date-localized-plugin>=1.4.0",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.6",
+    "mkdocs-git-revision-date-localized-plugin>=1.5.1",
     "mkdocs-minify-plugin>=0.8.0",
     "mkdocs-glightbox>=0.4.0",
 ]
