@@ -4,7 +4,7 @@ version = "0.6.2"
 description = "A FreeCAD macro that cuts 3D objects along a plane and adds aligned magnet holes"
 readme = "README.md"
 license = { text = "MIT" }
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.12"
 authors = [
     { name = "Sean P. Kane", email = "spkane@gmail.com" }
 ]
